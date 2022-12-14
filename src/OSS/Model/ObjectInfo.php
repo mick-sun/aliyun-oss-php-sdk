@@ -24,8 +24,9 @@ class ObjectInfo
      * @param string $type
      * @param string $size
      * @param string $storageClass
+     * @param string $header
      */
-    public function __construct($key, $lastModified, $eTag, $type, $size, $storageClass)
+    public function __construct($key, $lastModified, $eTag, $type, $size, $storageClass, $header)
     {
         $this->key = $key;
         $this->lastModified = $lastModified;
@@ -33,7 +34,12 @@ class ObjectInfo
         $this->type = $type;
         $this->size = $size;
         $this->storageClass = $storageClass;
+				$this->header = $header;
     }
+
+		public function getHeader() {
+			return $this->header;
+		}
 
     /**
      * @return string
@@ -66,7 +72,7 @@ class ObjectInfo
     {
         return $this->type;
     }
-    
+
     /**
      * php7 && 64bit can use it
      * @return int
@@ -75,8 +81,8 @@ class ObjectInfo
     {
         return (int)$this->size;
     }
-    
-    
+
+
     /**
      * php5.x or 32bit must use it
      * @return string
@@ -85,7 +91,7 @@ class ObjectInfo
     {
         return $this->size;
     }
-    
+
     /**
      * @return string
      */

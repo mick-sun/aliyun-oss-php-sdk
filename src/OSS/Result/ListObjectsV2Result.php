@@ -21,8 +21,9 @@ class ListObjectsV2Result extends Result
     protected function parseDataFromResponse()
     {
         $xml = new \SimpleXMLElement($this->rawResponse->body);
+				$header = $this->rawResponse->header;
         $encodingType = isset($xml->EncodingType) ? strval($xml->EncodingType) : "";
-        $objectList = $this->parseObjectList($xml, $encodingType);
+        $objectList = $this->parseObjectList($xml, $encodingType, $header);
         $prefixList = $this->parsePrefixList($xml, $encodingType);
         $bucketName = isset($xml->Name) ? strval($xml->Name) : "";
         $prefix = isset($xml->Prefix) ? strval($xml->Prefix) : "";
@@ -39,7 +40,7 @@ class ListObjectsV2Result extends Result
         return new ObjectListInfoV2($bucketName, $prefix, $maxKeys, $delimiter, $isTruncated, $objectList, $prefixList, $continuationToken, $nextContinuationToken, $startAfter, $keyCount);
     }
 
-    private function parseObjectList($xml, $encodingType)
+    private function parseObjectList($xml, $encodingType, $header)
     {
         $retList = array();
         if (isset($xml->Contents)) {
@@ -51,7 +52,7 @@ class ListObjectsV2Result extends Result
                 $type = isset($content->Type) ? strval($content->Type) : "";
                 $size = isset($content->Size) ? strval($content->Size) : "0";
                 $storageClass = isset($content->StorageClass) ? strval($content->StorageClass) : "";
-                $retList[] = new ObjectInfo($key, $lastModified, $eTag, $type, $size, $storageClass);
+                $retList[] = new ObjectInfo($key, $lastModified, $eTag, $type, $size, $storageClass, $header);
             }
         }
         return $retList;
